@@ -23,6 +23,11 @@ main {
   white-space: nowrap; /* Prevent wrapping */
 }
 
+.product-title-link {
+  text-decoration: underline;
+  color: black;
+}
+
 table td,
 table th {
   text-align: center;
