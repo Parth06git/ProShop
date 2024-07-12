@@ -6,34 +6,21 @@ import Loader from "../components/Loader.jsx";
 import Message from "../components/Message.jsx";
 
 const HomeScreen = () => {
-  const {
-    data: products,
-    isLoading,
-    error,
-  } = useGetProductsQuery();
+  const { data: products, isLoading, error } = useGetProductsQuery();
 
   return (
     <>
       {isLoading ? (
         <Loader />
       ) : error ? (
-        <Message
-          variant="danger"
-          children={error?.data?.message || error.error}
-        />
+        <Message variant="danger" children={error?.data?.message || error.error} />
       ) : (
         <>
           <h1>Latest Products</h1>
           <Row>
             {products.map((el) => {
               return (
-                <Col
-                  key={el._id}
-                  sm={12}
-                  md={6}
-                  lg={4}
-                  xl={3}
-                >
+                <Col key={el._id} sm={12} md={6} lg={4} xl={3}>
                   <Product product={el} />
                 </Col>
               );

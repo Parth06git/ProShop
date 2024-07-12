@@ -15,6 +15,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import HomeScreen from "./screens/HomeScreen";
 import ProductScreen from "./screens/ProductScreen";
+import CartScreen from "./screens/CartScreen.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -27,6 +28,10 @@ const router = createBrowserRouter(
       <Route
         path="/products/:id"
         element={<ProductScreen />}
+      />
+      <Route
+        path="/cart"
+        element={<CartScreen />}
       />
     </Route>
   )
