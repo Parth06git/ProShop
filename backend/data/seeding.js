@@ -14,7 +14,7 @@ connectToMongo();
 
 const importData = async () => {
   try {
-    const createdUser = await User.insertMany(users);
+    const createdUser = await User.create(users);
 
     const adminUser = createdUser[0]._id;
 

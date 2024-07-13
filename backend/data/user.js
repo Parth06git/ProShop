@@ -1,7 +1,7 @@
 const users = [
   {
     name: "Parth Trivedi",
-    email: "admin@proshop.in",
+    email: "admin@proshop.io",
     password: "test1234",
     isAdmin: true,
   },

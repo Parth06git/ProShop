@@ -2,8 +2,9 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import connectToMongo from "./config/db.js";
-import productRoutes from "./routes/productRoutes.js";
 import globalErrorHandler from "./controllers/errorController.mjs";
+import productRoutes from "./routes/productRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 dotenv.config();
 
@@ -14,19 +15,17 @@ connectToMongo();
 const app = express();
 
 app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
   res.send("Parth Trivedi");
 });
 app.use("/api/products", productRoutes);
+app.use("/api/users", userRoutes);
 
 app.all("*", (req, res, next) => {
-  next(
-    new AppError(
-      `Can't find ${req.originalUrl} on this server!`,
-      404
-    )
-  );
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
 app.use(globalErrorHandler);

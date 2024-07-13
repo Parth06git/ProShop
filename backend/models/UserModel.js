@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import validator from "validator";
 
 const userSchema = mongoose.Schema(
   {
@@ -11,6 +12,7 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      validate: [validator.isEmail, "Please enter a vaild email"],
     },
     password: {
       type: String,
@@ -21,6 +23,7 @@ const userSchema = mongoose.Schema(
       required: true,
       default: false,
     },
+    passwordChangedAt: Date,
   },
   {
     timestamps: true,
@@ -41,6 +44,23 @@ userSchema.pre("save", async function (next) {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
+
+userSchema.pre("save", function (next) {
+  if (!this.isModified("password") || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
+userSchema.methods.changePasswordAfter = function (JWTtimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+
+    return JWTtimestamp < changedTimestamp;
+  }
+
+  return false;
+};
 
 const User = mongoose.model("User", userSchema);
 
