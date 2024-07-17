@@ -17,8 +17,9 @@ const sendToken = (user, statusCode, res) => {
   const cookieOptions = {
     expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 60 * 60 * 1000),
     httpOnly: true,
+    sameSite: "strict",
+    secure: process.env.NODE_ENV !== "development",
   };
-  if (process.env.NODE_ENV !== "development") cookieOptions.secure = true;
   res.cookie("jwt", token, cookieOptions);
 
   // Remove password from output
@@ -80,8 +81,8 @@ const userController = {
   // @route   Get /api/users/logout
   // @access  Private
   logOut: catchAsync(async (req, res) => {
-    res.cookie("jwt", "LogOut", {
-      expires: new Date(Date.now() + 10 * 1000),
+    res.cookie("jwt", "", {
+      expires: new Date(0),
       httpOnly: true,
     });
     res.status(200).json({ status: "success" });
@@ -98,6 +99,7 @@ const userController = {
     } else if (req.cookies.jwt) {
       token = req.cookies.jwt;
     }
+    
     if (!token) {
       return next(new AppError("You are not logged in! Please log in to get access", 401));
     }

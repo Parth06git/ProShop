@@ -5,6 +5,8 @@ import connectToMongo from "./config/db.js";
 import globalErrorHandler from "./controllers/errorController.mjs";
 import productRoutes from "./routes/productRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import AppError from "./utils/appError.mjs";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -14,9 +16,16 @@ connectToMongo();
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: true,
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.send("Parth Trivedi");
