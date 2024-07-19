@@ -5,6 +5,7 @@ import connectToMongo from "./config/db.js";
 import globalErrorHandler from "./controllers/errorController.mjs";
 import productRoutes from "./routes/productRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
 import AppError from "./utils/appError.mjs";
 import cookieParser from "cookie-parser";
 
@@ -32,6 +33,7 @@ app.get("/", (req, res) => {
 });
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/orders", orderRoutes);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
