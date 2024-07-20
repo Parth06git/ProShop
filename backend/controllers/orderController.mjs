@@ -55,8 +55,21 @@ const orderController = {
   // @desc    Update order to paid
   // @route   PATCH /api/orders/:id/pay
   // @access  Private
-  updateOrderToPaid: catchAsync(async (req, res) => {
-    res.send("Order pay");
+  updateOrderToPaid: catchAsync(async (req, res, next) => {
+    const order = await Order.findById(req.params.id);
+    if (!order) return next(new AppError("No Order Found", 404));
+
+    order.isPaid = true;
+    order.paidAt = Date.now();
+    order.paymentResult = {
+      id: req.body.id,
+      status: req.body.status,
+      update_time: req.body.update_time,
+      email_address: req.body.email_address,
+    };
+
+    const updatedOrder = await order.save();
+    res.status(200).json(updatedOrder);
   }),
 
   // @desc    Update order to delivered
