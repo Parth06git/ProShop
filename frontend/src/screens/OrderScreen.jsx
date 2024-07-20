@@ -187,11 +187,11 @@ const OrderScreen = () => {
                   {/* <Button onClick={handleTestPay} style={{ marginBottom: "10px" }}>
                     Test Pay Order
                   </Button> */}
-                  <PayPalButtons
-                    createOrder={handleCreateOrder}
-                    onApprove={handleOnApprove}
-                    onError={handleOnError}
-                  />
+                    <PayPalButtons
+                      createOrder={handleCreateOrder}
+                      onApprove={handleOnApprove}
+                      onError={handleOnError}
+                    />
                 </ListGroup.Item>
               )}
               {/* PlaceHolder for mark as deliver */}
