@@ -15,7 +15,7 @@ const sendToken = (user, statusCode, res) => {
 
   // sending token as Cookie
   const cookieOptions = {
-    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 60 * 60 * 1000),
+    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
     httpOnly: true,
     sameSite: "strict",
     secure: process.env.NODE_ENV !== "development",
@@ -99,7 +99,7 @@ const userController = {
     } else if (req.cookies.jwt) {
       token = req.cookies.jwt;
     }
-    
+
     if (!token) {
       return next(new AppError("You are not logged in! Please log in to get access", 401));
     }

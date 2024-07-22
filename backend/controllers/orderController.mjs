@@ -76,14 +76,22 @@ const orderController = {
   // @route   PATCH /api/orders/:id/deliver
   // @access  Private/Admin
   updateOrderToDelivered: catchAsync(async (req, res) => {
-    res.send("Order delivered");
+    const order = await Order.findById(req.params.id);
+    if (!order) return next(new AppError("No Order Found", 404));
+
+    order.isDelivered = true;
+    order.deliveredAt = Date.now();
+
+    const updatedOrder = await order.save();
+    res.status(200).json(updatedOrder);
   }),
 
   // @desc    Get all orders
   // @route   GET /api/orders
   // @access  Private/Admin
   getAllOrders: catchAsync(async (req, res) => {
-    res.send("All Orders");
+    const orders = await Order.find().populate("user", "_id name");
+    res.status(200).json(orders);
   }),
 };
 

@@ -32,7 +32,12 @@ const ProductScreen = () => {
         <>
           <Row>
             <Col md={5}>
-              <Image src={product.image} alt={product.name} fluid />
+              <Image
+                src={product.image}
+                alt={product.name}
+                fluid
+                style={{ borderRadius: "15px", maxHeight: "75vh", }}
+              />
             </Col>
 
             <Col md={4}>

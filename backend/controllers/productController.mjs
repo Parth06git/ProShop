@@ -21,6 +21,35 @@ const productController = {
     }
     res.json(product);
   }),
+
+  // @desc    Create a product
+  // @route   POST /api/products
+  // @access  Private(Admin)
+  createProduct: catchAsync(async (req, res, next) => {
+    if (!req.user.isAdmin) {
+      return next(new AppError("You are not authorize for this action", 401));
+    }
+
+    const product = new Product(req.body);
+
+    const createdProduct = await product.save();
+    res.status(201).json(createdProduct);
+  }),
+
+  // @desc    Update a product
+  // @route   PATCH /api/products
+  // @access  Private(Admin)
+  updateProduct: catchAsync(async (req, res, next) => {
+    if (!req.user.isAdmin) {
+      return next(new AppError("You are not authorize for this action", 401));
+    }
+
+    const product = await Product.findByIdAndUpdate(req.params.id, req.body);
+
+    if (!product) return next(new AppError("Product not found", 404));
+
+    res.status(200).json(product);
+  }),
 };
 
 export default productController;

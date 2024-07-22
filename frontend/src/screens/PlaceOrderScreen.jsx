@@ -46,7 +46,7 @@ const PlaceOrderScreen = () => {
     <>
       <CheckoutSteps step1 step2 step3 step4 />
       <Row>
-        <Col md={8}>
+        <Col md={8} className="mt-2">
           <ListGroup>
             <ListGroup.Item>
               <h2>Shipping</h2>
@@ -91,7 +91,7 @@ const PlaceOrderScreen = () => {
             </ListGroup.Item>
           </ListGroup>
         </Col>
-        <Col md={4}>
+        <Col md={4} className="mt-2">
           <Card>
             <ListGroup variant="flush">
               <ListGroup.Item>
