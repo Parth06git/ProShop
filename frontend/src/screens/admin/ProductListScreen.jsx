@@ -4,15 +4,25 @@ import { LinkContainer } from "react-router-bootstrap";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import Message from "../../components/Message";
 import Loader from "../../components/Loader";
-import { useGetProductsQuery } from "../../slices/ProductApiSlice";
+import { useDeleteProductMutation, useGetProductsQuery } from "../../slices/ProductApiSlice";
 import { Link } from "react-router-dom";
 import CreateProductModal from "../../components/CreateProductModal";
+import { toast } from "react-toastify";
 
 const ProductListScreen = () => {
   const { data: products, refetch, isloading, error } = useGetProductsQuery();
+  const [deleteProduct, { isloading: loadingDelete }] = useDeleteProductMutation();
 
-  const handleDelete = (id) => {
-    console.log("Hi", id);
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure, You want to delete this product")) {
+      try {
+        await deleteProduct(id);
+        refetch();
+        toast.success("Product Deleted Successfully");
+      } catch (error) {
+        toast.error(error.error);
+      }
+    }
   };
 
   return (
@@ -26,6 +36,7 @@ const ProductListScreen = () => {
         </Col>
       </Row>
 
+      {loadingDelete && <Loader />}
       {isloading ? (
         <Loader />
       ) : error ? (
@@ -47,15 +58,15 @@ const ProductListScreen = () => {
             <tbody>
               {products?.map((product) => (
                 <tr key={product._id}>
-                  <td>
+                  <td className="p-3">
                     <Link to={`/products/${product._id}`} style={{ textDecoration: "none" }}>
                       <strong>{product._id}</strong>
                     </Link>
                   </td>
-                  <td>{product.name}</td>
-                  <td>${product.price}</td>
-                  <td>{product.category}</td>
-                  <td>{product.brand}</td>
+                  <td className="p-3">{product.name}</td>
+                  <td className="p-3">${product.price}</td>
+                  <td className="p-3">{product.category}</td>
+                  <td className="p-3">{product.brand}</td>
                   <td>
                     <LinkContainer to={`/admin/products/${product._id}/edit`}>
                       <Button variant="dark" className="btn-sm m-2">

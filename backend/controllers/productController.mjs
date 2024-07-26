@@ -50,6 +50,21 @@ const productController = {
 
     res.status(200).json(product);
   }),
+
+  // @desc    Delete a product
+  // @route   Delete /api/products
+  // @access  Private(Admin)
+  deleteProduct: catchAsync(async (req, res, next) => {
+    if (!req.user.isAdmin) {
+      return next(new AppError("You are not authorize for this action", 401));
+    }
+
+    const product = await Product.findByIdAndDelete(req.params.id);
+
+    if (!product) return next(new AppError("Product not found", 404));
+
+    res.status(200).json(product);
+  }),
 };
 
 export default productController;

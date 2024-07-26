@@ -11,9 +11,7 @@ router
 router
   .route("/:id")
   .get(productController.getProduct)
-  .patch(
-    userController.protect,
-    productController.updateProduct
-  );
+  .patch(userController.protect, productController.updateProduct)
+  .delete(userController.protect, productController.deleteProduct);
 
 export default router;

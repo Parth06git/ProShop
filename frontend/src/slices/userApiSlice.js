@@ -42,6 +42,47 @@ export const userApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
     }),
+    deleteProfile: builder.mutation({
+      query: (data) => ({
+        url: `${Users_URL}/profile`,
+        method: "DELETE",
+        body: data,
+        credentials: "include",
+      }),
+    }),
+
+    // Admin Apis
+    getAllUsers: builder.query({
+      query: () => ({
+        url: Users_URL,
+        method: "GET",
+        credentials: "include",
+      }),
+      keepUnusedDataFor: 5,
+    }),
+    getUser: builder.query({
+      query: (userId) => ({
+        url: `${Users_URL}/${userId}`,
+        credentials: "include",
+      }),
+      keepUnusedDataFor: 5,
+    }),
+    updateUser: builder.mutation({
+      query: (details) => ({
+        url: `${Users_URL}/${details.id}`,
+        method: "PATCH",
+        body: details,
+        credentials: "include",
+      }),
+      invalidatesTags: ['Users']
+    }),
+    deleteUser: builder.mutation({
+      query: (userId) => ({
+        url: `${Users_URL}/${userId}`,
+        method: "DELETE",
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
@@ -51,4 +92,9 @@ export const {
   useRegisterMutation,
   useUpdateProfileMutation,
   useUpdatePasswordMutation,
+  useDeleteProfileMutation,
+  useGetAllUsersQuery,
+  useGetUserQuery,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
 } = userApiSlice;

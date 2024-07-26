@@ -194,12 +194,18 @@ const userController = {
   // @desc    Delete user profile
   // @route   DELETE /api/users/profile
   // @access  Private
-  deleteUserProfile: catchAsync(async (req, res) => {
+  deleteUserProfile: catchAsync(async (req, res, next) => {
+    // 1) Get user
+    const user = await User.findById(req.user._id).select("+password");
+
+    // 2) check if posted current password is correct
+    if (!(await user.matchPassword(req.body.currentPassword, user.password))) {
+      return next(new AppError("Current password is incorrect", 400));
+    }
+
+    // 3) update password
     await User.findByIdAndDelete(req.user._id);
-    res.status(204).json({
-      status: "success",
-      data: null,
-    });
+    res.status(204).json({ data: null });
   }),
 
   // @desc    Get all users
@@ -209,7 +215,7 @@ const userController = {
     if (req.user.isAdmin) {
       const users = await User.find();
 
-      res.status(200).json({ users });
+      res.status(200).json(users);
     } else {
       return next(new AppError("You are not allowed to perform this action!", 403));
     }
@@ -222,7 +228,7 @@ const userController = {
     if (req.user.isAdmin) {
       const user = await User.findById(req.params.id);
       if (!user) return next(new AppError("User not found with this id", 404));
-      res.status(200).json({ user });
+      res.status(200).json(user);
     } else {
       return next(new AppError("You are not allowed to perform this action!", 403));
     }
@@ -233,9 +239,9 @@ const userController = {
   // @access  Private (admin)
   updateUser: catchAsync(async (req, res) => {
     if (req.user.isAdmin) {
-      const user = await User.findByIdAndUpdate(req.params.id);
+      const user = await User.findByIdAndUpdate(req.params.id, req.body);
 
-      res.status(200).json({ user });
+      res.status(200).json(user);
     } else {
       return next(new AppError("You are not allowed to perform this action!", 403));
     }
@@ -246,7 +252,7 @@ const userController = {
   // @access  Private (admin)
   deleteUser: catchAsync(async (req, res) => {
     if (req.user.isAdmin) {
-      await User.findByIdAndDeleteBy(req.params.id);
+      await User.findByIdAndDelete(req.params.id);
 
       res.status(204).json({ data: null });
     } else {

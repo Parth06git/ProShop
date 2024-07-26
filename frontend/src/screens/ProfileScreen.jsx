@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { Table, Form, Button, Row, Col, Card } from "react-bootstrap";
+import { Table, Form, Button, Row, Col, Card, Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import { toast } from "react-toastify";
-import { useUpdateProfileMutation, useUpdatePasswordMutation } from "../slices/userApiSlice";
+import {
+  useUpdateProfileMutation,
+  useUpdatePasswordMutation,
+  useDeleteProfileMutation,
+} from "../slices/userApiSlice";
 import { useGetMyOrdersQuery } from "../slices/orderApiSlice";
 import { setCredentials } from "../slices/authSlice";
-import { FaTimes } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { FaTimes, FaTrash } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 
 const ProfileScreen = () => {
+  const [show, setShow] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -23,8 +28,11 @@ const ProfileScreen = () => {
   let user = userInfo.data.user;
   const [updateProfile, { isLoading: loadingUpdateProfile }] = useUpdateProfileMutation();
   const [updatePassword, { isLoading: loadingUpdatePassword }] = useUpdatePasswordMutation();
+  const [deleteProfile] = useDeleteProfileMutation();
 
   const { data: orders, isLoading: loadingOrders, error } = useGetMyOrdersQuery();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
@@ -32,6 +40,9 @@ const ProfileScreen = () => {
       setEmail(user.email);
     }
   }, [setName, setEmail, user]);
+
+  const handleShow = () => setShow(true);
+  const handleClose = () => setShow(false);
 
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
@@ -52,6 +63,17 @@ const ProfileScreen = () => {
       const res = await updatePassword({ currentPassword, newPassword, confirmPassword }).unwrap();
       dispatch(setCredentials(res));
       toast.success("Profile Updated");
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+    }
+  };
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await deleteProfile({ currentPassword }).unwrap();
+      dispatch(setCredentials(res));
+      toast.success("Profile Deleted");
+      navigate("/");
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
@@ -136,6 +158,10 @@ const ProfileScreen = () => {
               {loadingUpdatePassword && <Loader />}
             </Form>
           </Card>
+
+          <Button variant="danger" className="my-2" onClick={handleShow}>
+            <FaTrash /> Delete Me
+          </Button>
         </Col>
         <Col md={9}>
           <h2>My Orders</h2>
@@ -183,6 +209,28 @@ const ProfileScreen = () => {
           )}
         </Col>
       </Row>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Create Product</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleDelete}>
+            <Form.Group controlId="current Password" className="my-2">
+              <Form.Label>Current Password</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Enter Your Current Password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+              />
+            </Form.Group>
+            <Button type="submit" variant="danger" className="my-2">
+              <FaTrash /> Delete Me
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </>
   );
 };
