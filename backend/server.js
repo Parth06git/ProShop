@@ -45,9 +45,18 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/uploads", uploadRoutes);
 app.get("/api/config/paypal", (req, res) => res.send({ clientId: process.env.PAYPAL_CLIENT_ID })); // Route should be similar for all application
 
-app.all("*", (req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
-});
+if (process.env.NODE_ENV === "production") {
+  // set static folder
+  app.use(express.static(path.join(__dirname, "/frontend/build")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
+  });
+} else {
+  app.all("*", (req, res, next) => {
+    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+  });
+}
 
 app.use(globalErrorHandler);
 

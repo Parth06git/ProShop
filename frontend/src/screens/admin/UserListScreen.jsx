@@ -33,7 +33,7 @@ const UserListScreen = () => {
     <>
       <Row className="align-items-center">
         <Col>
-          <h1>Products</h1>
+          <h1>Users</h1>
         </Col>
       </Row>
 
