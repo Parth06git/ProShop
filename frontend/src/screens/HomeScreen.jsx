@@ -5,7 +5,9 @@ import { useGetProductsQuery } from "../slices/ProductApiSlice.js";
 import Loader from "../components/Loader.jsx";
 import Message from "../components/Message.jsx";
 import Paginate from "../components/Pagination.jsx";
+import ProductCarousel from "../components/ProductCarousel.jsx";
 import { Link, useParams } from "react-router-dom";
+import Meta from "../components/Meta.jsx";
 
 const HomeScreen = () => {
   const { pageNumber, keyword } = useParams();
@@ -13,7 +15,9 @@ const HomeScreen = () => {
 
   return (
     <>
-      {keyword && (
+      {!keyword ? (
+        <ProductCarousel />
+      ) : (
         <Link className="btn btn-dark my-3" to="/">
           Go Back
         </Link>
@@ -24,6 +28,7 @@ const HomeScreen = () => {
         <Message variant="danger" children={error?.data?.message || error.error} />
       ) : (
         <>
+          <Meta />
           <h1>Latest Products</h1>
           <Row style={{ justifyContent: "space-around" }}>
             {data.products.map((el) => {

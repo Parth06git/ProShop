@@ -111,6 +111,14 @@ const productController = {
     await product.save();
     res.status(201).json({ message: "Review added" });
   }),
+
+  // @desc    Get top rated products
+  // @route   GET /api/products/topRated
+  // @access  Public
+  getTopProducts: catchAsync(async (req, res, next) => {
+    const products = await Product.find().sort({ rating: -1 }).limit(3);
+    res.status(200).json(products);
+  }),
 };
 
 export default productController;

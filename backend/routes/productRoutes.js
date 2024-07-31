@@ -8,6 +8,9 @@ router
   .route("/")
   .get(productController.getAllProducts)
   .post(userController.protect, productController.createProduct);
+
+router.get("/topRated", productController.getTopProducts);
+
 router
   .route("/:id")
   .get(productController.getProduct)
