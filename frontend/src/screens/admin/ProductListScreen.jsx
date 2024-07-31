@@ -5,12 +5,14 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import Message from "../../components/Message";
 import Loader from "../../components/Loader";
 import { useDeleteProductMutation, useGetProductsQuery } from "../../slices/ProductApiSlice";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import CreateProductModal from "../../components/CreateProductModal";
 import { toast } from "react-toastify";
+import Paginate from "../../components/Pagination";
 
 const ProductListScreen = () => {
-  const { data: products, refetch, isloading, error } = useGetProductsQuery();
+  const { pageNumber } = useParams();
+  const { data, refetch, isloading, error } = useGetProductsQuery({ pageNumber });
   const [deleteProduct, { isloading: loadingDelete }] = useDeleteProductMutation();
 
   const handleDelete = async (id) => {
@@ -40,7 +42,7 @@ const ProductListScreen = () => {
       {isloading ? (
         <Loader />
       ) : error ? (
-        <Message variant="danger">{error}</Message>
+        <Message variant="danger">{error.message}</Message>
       ) : (
         <>
           <Table striped hover responsive className="table-sm">
@@ -56,7 +58,7 @@ const ProductListScreen = () => {
             </thead>
 
             <tbody>
-              {products?.map((product) => (
+              {data?.products?.map((product) => (
                 <tr key={product._id}>
                   <td className="p-3">
                     <Link to={`/products/${product._id}`} style={{ textDecoration: "none" }}>
@@ -85,6 +87,7 @@ const ProductListScreen = () => {
               ))}
             </tbody>
           </Table>
+          <Paginate pages={data?.pages} page={data?.page} isAdmin={true} />
         </>
       )}
     </>

@@ -70,6 +70,34 @@ const productSchema = mongoose.Schema(
   }
 );
 
+reviewSchema.statics.calcAvgRatings = async function (tourId) {
+  const stats = await this.aggregate([
+    {
+      $match: { tour: tourId },
+    },
+    {
+      $group: {
+        _id: "$tour",
+        nRatings: { $sum: 1 },
+        avgRating: { $avg: "$rating" },
+      },
+    },
+  ]);
+
+  if (stats.length > 0) {
+    await Tour.findByIdAndUpdate(tourId, {
+      rating: stats[0].avgRating,
+      numReviews: stats[0].nRatings,
+    });
+  } else {
+    await Tour.findByIdAndUpdate(tourId, {
+      rating: 4.5,
+      numReviews: 0,
+    });
+  }
+};
+
+
 const Product = mongoose.model("Product", productSchema);
 
 export default Product;

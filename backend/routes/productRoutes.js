@@ -14,4 +14,6 @@ router
   .patch(userController.protect, productController.updateProduct)
   .delete(userController.protect, productController.deleteProduct);
 
+router.route("/:id/reviews").post(userController.protect, productController.createProductReview);
+
 export default router;
